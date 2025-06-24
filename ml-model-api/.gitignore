@@ -1,0 +1,42 @@
+# === Node.js / React ===
+node_modules/     # Node package dependencies
+.env              # Environment variables
+build/            # React build output
+dist/             # Any compiled distribution files
+
+# === Python ===
+__pycache__/      # Python bytecode cache
+*.pyc             # Compiled Python files
+models/        # Local model files
+venv/             # Python virtual environments
+.env              # Python environment config
+Include/
+Lib/
+Scripts/
+pyvenv.cfg
+models/
+
+
+
+# === Operating System files ===
+.DS_Store         # macOS file system junk
+Thumbs.db         # Windows thumbnail cache
+
+# === IDE files ===
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# === Logs ===
+*.log
+logs/
+
+# === Database ===
+*.db
+*.sqlite
+
+# === Temporary files ===
+tmp/
+temp/
+.tmp/
