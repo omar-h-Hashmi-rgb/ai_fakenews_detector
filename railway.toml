@@ -1,0 +1,6 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "cd ml-model-api && pip install -r requirements.txt"
+
+[start]
+command = "cd ml-model-api && python app.py"
