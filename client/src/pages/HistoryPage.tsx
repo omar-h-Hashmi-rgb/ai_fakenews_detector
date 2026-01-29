@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { History, Download, Trash2, AlertCircle } from 'lucide-react';
 import { PredictionData } from './HomePage';
+import Modal from '../components/Modal';
 import jsPDF from 'jspdf';
 
 const HistoryPage: React.FC = () => {
   const [history, setHistory] = useState<PredictionData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     fetchHistory();
@@ -47,9 +49,7 @@ const HistoryPage: React.FC = () => {
     doc.save(`fake-news-report-${new Date(item.timestamp).toISOString().split('T')[0]}.pdf`);
   };
 
-  const clearHistory = async () => {
-    if (!window.confirm('Are you sure you want to clear all history?')) return;
-    
+  const confirmClearHistory = async () => {
     try {
       const response = await fetch('/api/history', { method: 'DELETE' });
       if (!response.ok) throw new Error('Failed to clear history');
@@ -57,6 +57,10 @@ const HistoryPage: React.FC = () => {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to clear history');
     }
+  };
+
+  const clearHistory = () => {
+    setIsDeleteModalOpen(true);
   };
 
   if (isLoading) {
@@ -84,7 +88,7 @@ const HistoryPage: React.FC = () => {
             Analysis History
           </h1>
         </div>
-        
+
         {history.length > 0 && (
           <button
             onClick={clearHistory}
@@ -122,18 +126,17 @@ const HistoryPage: React.FC = () => {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      item.prediction === 'real'
-                        ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                        : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                    }`}>
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${item.prediction === 'real'
+                      ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                      : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                      }`}>
                       {item.prediction.toUpperCase()}
                     </span>
                     <span className="text-sm text-gray-500 dark:text-gray-400">
                       {new Date(item.timestamp).toLocaleDateString()}
                     </span>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div>
                       <span className="font-medium text-gray-700 dark:text-gray-300">Confidence:</span>
@@ -150,12 +153,12 @@ const HistoryPage: React.FC = () => {
                     <div>
                       <span className="font-medium text-gray-700 dark:text-gray-300">Keywords:</span>
                       <span className="ml-2 text-gray-600 dark:text-gray-400">
-                    {(item.explanation?.keywords || []).slice(0, 3).join(', ')}
-                  </span>
+                        {(item.explanation?.keywords || []).slice(0, 3).join(', ')}
+                      </span>
                     </div>
                   </div>
                 </div>
-                
+
                 <button
                   onClick={() => exportToPDF(item)}
                   className="flex items-center space-x-2 px-3 py-2 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors duration-200"
@@ -164,7 +167,7 @@ const HistoryPage: React.FC = () => {
                   <span className="hidden sm:inline">Export</span>
                 </button>
               </div>
-              
+
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                 <p className="text-gray-600 dark:text-gray-400 line-clamp-3">
                   {item.article_text}
@@ -174,6 +177,16 @@ const HistoryPage: React.FC = () => {
           ))}
         </div>
       )}
+
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={confirmClearHistory}
+        title="Clear History"
+        message="Are you sure you want to clear all analysis history? This action cannot be undone."
+        confirmLabel="Clear All"
+        isDestructive={true}
+      />
     </div>
   );
 };

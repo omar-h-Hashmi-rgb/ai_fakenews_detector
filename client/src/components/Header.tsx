@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Shield, History, TrendingUp, Moon, Sun } from 'lucide-react';
+import { Shield, History, TrendingUp, Moon, Sun, Sparkles } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
 const Header: React.FC = () => {
@@ -11,6 +11,7 @@ const Header: React.FC = () => {
     { path: '/', label: 'Analyze', icon: Shield },
     { path: '/history', label: 'History', icon: History },
     { path: '/trending', label: 'Trending', icon: TrendingUp },
+    { path: '/onboarding', label: 'Intro', icon: Sparkles },
   ];
 
   return (
@@ -29,11 +30,10 @@ const Header: React.FC = () => {
               <Link
                 key={path}
                 to={path}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${
-                  location.pathname === path
+                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${location.pathname === path
                     ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
                     : 'text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
+                  }`}
               >
                 <Icon className="h-4 w-4" />
                 <span className="font-medium">{label}</span>
@@ -57,11 +57,10 @@ const Header: React.FC = () => {
               <Link
                 key={path}
                 to={path}
-                className={`flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 ${
-                  location.pathname === path
+                className={`flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 ${location.pathname === path
                     ? 'text-primary-600 dark:text-primary-400'
                     : 'text-gray-500 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-400'
-                }`}
+                  }`}
               >
                 <Icon className="h-5 w-5" />
                 <span className="text-xs font-medium mt-1">{label}</span>

@@ -24,10 +24,11 @@ const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleAnalysis = async (text: string, isUrl: boolean = false) => {
+  const handleAnalysis = async (text: string, isUrl: boolean = false, useAdvanced: boolean = false) => {
+    setPredictionData(null);
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch('/api/analyze', {
         method: 'POST',
@@ -37,6 +38,7 @@ const HomePage: React.FC = () => {
         body: JSON.stringify({
           text,
           is_url: isUrl,
+          use_advanced: useAdvanced,
         }),
       });
 
@@ -60,7 +62,7 @@ const HomePage: React.FC = () => {
           AI Fake News Detector
         </h1>
         <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Analyze news articles using advanced AI to detect fake news with confidence scores, 
+          Analyze news articles using advanced AI to detect fake news with confidence scores,
           sentiment analysis, and detailed explanations.
         </p>
       </div>

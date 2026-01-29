@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Link, Send, Loader } from 'lucide-react';
+import { FileText, Link, Send, Loader, Sparkles } from 'lucide-react';
 
 interface ArticleInputProps {
-  onAnalyze: (text: string, isUrl: boolean) => void;
+  onAnalyze: (text: string, isUrl: boolean, useAdvanced: boolean) => void;
   isLoading: boolean;
 }
 
@@ -25,7 +25,14 @@ const ArticleInput: React.FC<ArticleInputProps> = ({ onAnalyze, isLoading }) => 
     e.preventDefault();
     const input = inputType === 'text' ? text : url;
     if (input.trim()) {
-      onAnalyze(input.trim(), inputType === 'url');
+      onAnalyze(input.trim(), inputType === 'url', false);
+    }
+  };
+
+  const handleAdvancedAnalyze = () => {
+    const input = inputType === 'text' ? text : url;
+    if (input.trim()) {
+      onAnalyze(input.trim(), inputType === 'url', true);
     }
   };
 
@@ -42,24 +49,22 @@ const ArticleInput: React.FC<ArticleInputProps> = ({ onAnalyze, isLoading }) => 
         <button
           type="button"
           onClick={() => setInputType('text')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
-            inputType === 'text'
+          className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${inputType === 'text'
               ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border-2 border-primary-200 dark:border-primary-800'
               : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border-2 border-transparent hover:bg-gray-200 dark:hover:bg-gray-600'
-          }`}
+            }`}
         >
           <FileText className="h-4 w-4" />
           <span className="font-medium">Text</span>
         </button>
-        
+
         <button
           type="button"
           onClick={() => setInputType('url')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
-            inputType === 'url'
+          className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${inputType === 'url'
               ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border-2 border-primary-200 dark:border-primary-800'
               : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border-2 border-transparent hover:bg-gray-200 dark:hover:bg-gray-600'
-          }`}
+            }`}
         >
           <Link className="h-4 w-4" />
           <span className="font-medium">URL</span>
@@ -102,24 +107,44 @@ const ArticleInput: React.FC<ArticleInputProps> = ({ onAnalyze, isLoading }) => 
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={!isValid || isLoading}
-          className={`w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-lg font-medium transition-all duration-200 ${
-            isValid && !isLoading
-              ? 'bg-primary-600 hover:bg-primary-700 text-white shadow-md hover:shadow-lg active:scale-95'
-              : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-          }`}
-        >
-          {isLoading ? (
-            <Loader className="h-5 w-5 animate-spin" />
-          ) : (
-            <Send className="h-5 w-5" />
-          )}
-          <span>
-            {isLoading ? 'Analyzing...' : 'Analyze Article'}
-          </span>
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="submit"
+            disabled={!isValid || isLoading}
+            className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-lg font-medium transition-all duration-200 ${isValid && !isLoading
+                ? 'bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
+              }`}
+          >
+            {isLoading ? (
+              <Loader className="h-5 w-5 animate-spin" />
+            ) : (
+              <Send className="h-5 w-5" />
+            )}
+            <span>
+              Analyze
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleAdvancedAnalyze}
+            disabled={!isValid || isLoading}
+            className={`flex-[2] flex items-center justify-center space-x-2 py-3 px-4 rounded-lg font-medium transition-all duration-200 ${isValid && !isLoading
+                ? 'bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white shadow-md hover:shadow-lg active:scale-95'
+                : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+              }`}
+          >
+            {isLoading ? (
+              <Loader className="h-5 w-5 animate-spin" />
+            ) : (
+              <Sparkles className="h-5 w-5" />
+            )}
+            <span>
+              Advanced Analyze
+            </span>
+          </button>
+        </div>
       </form>
     </div>
   );

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import HomePage from './pages/HomePage';
 import HistoryPage from './pages/HistoryPage';
 import TrendingPage from './pages/TrendingPage';
+import OnboardingPage from './pages/OnboardingPage';
 import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
@@ -16,6 +16,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/trending" element={<TrendingPage />} />
+            <Route path="/onboarding" element={<OnboardingPage />} />
           </Routes>
         </main>
       </div>

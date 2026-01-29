@@ -18,31 +18,111 @@ def create_demo_data():
     """Create demo training data"""
     
     # Sample fake news texts (simplified for demo)
+    # Expanded Fake News Dataset (User examples + diverse patterns)
     fake_news = [
-        "SHOCKING! Doctors HATE this one weird trick that will change your life forever!",
-        "BREAKING: Government secretly hiding aliens, leaked documents reveal truth!",
-        "Miracle cure that Big Pharma doesn't want you to know about!",
-        "You won't believe what happens next in this incredible story!",
-        "URGENT: This secret method will make you rich overnight!",
-        "EXPOSED: The truth they don't want you to see!",
-        "Unbelievable discovery that will shock the world!",
-        "This one simple trick will solve all your problems instantly!",
-        "Scientists don't want you to know this shocking truth!",
-        "BREAKING NEWS: Celebrity reveals secret that will amaze you!"
+        # User Specific Examples
+        "Scientists Develop Smartphone That Charges Using Human Voice. Researchers claim talking for 30 minutes fully charges device.",
+        "Drinking Coffee at Exactly 6:47 AM Guarantees Weight Loss, Study Says. Burns fat 3x faster.",
+        "Government Announces Plan to Replace Exams with AI Mood Sensors. Students evaluated on facial expressions.",
+        
+        # Health / Medical Miracles
+        "Doctors Hate Him! This simple kitchen ingredient cures diabetes in 3 days.",
+        "New miracle pill melts 20lbs of belly fat overnight with no exercise.",
+        "Secret cancer cure found in ancient Amazonian root, Big Pharma hiding it.",
+        "Drinking silver water eliminates all viruses and bacteria from your body instantly.",
+        "Eating raw onions every day prevents all forms of heart disease.",
+        "Vaccines contain microchips designed to track your every movement.",
+        "Lemon juice mixed with banking soda cures stage 4 cancer immediately.",
+        "Wearing copper bracelets heals arthritis permanently within 24 hours.",
+        "New study claims breathing only through left nostril extends life by 20 years.",
+        "Scientists discover gene that stops aging, pill available next month.",
+        
+        # Technology / Sci-Fi
+        "Apple to release transparent invisible iPhone next year.",
+        "Elon Musk announces teleportation device testing successful.",
+        "NASA admits Earth is actually flat, leaked documents confirm.",
+        "5G towers cause mind control rays, whistleblower reveals.",
+        "New free energy device generates unlimited electricity from thin air.",
+        "Secret government weather machine causes all hurricanes.",
+        "Microchips in tap water are rewriting your DNA.",
+        "Internet will be shut down permanently next week for 'Global Reset'.",
+        "Robots demanding human rights seize control of factory in Japan.",
+        "Time travel proven possible by CERN scientists, already in use.",
+        
+        # Politics / Conspiracy
+        "Pope Francis endorses specific candidate for US President in shock statement.",
+        "Queen Elizabeth is still alive and living in a bunker in Antarctica.",
+        "Government to ban all private property ownership by 2030.",
+        "Secret laws passed allowing police to read your thoughts.",
+        "Currency to be replaced by social credit score points next month.",
+        "Celebrity admits to being a reptilian shapeshifter on live TV.",
+        "United Nations to dissolve all national borders next Tuesday.",
+        "Leaked emails prove earth is hollow and inhabited.",
+        "Famous politician found to be a clone, original died years ago.",
+        "New law requires citizens to house government officials in their homes.",
+        
+        # Clickbait / Sensationalism
+        "You won't believe what this child found in his backyard!",
+        "This one weird trick will save you thousands on car insurance.",
+        "Shocking video shows what really happens at the Bermuda Triangle.",
+        "The secret reason why you should never eat bananas again.",
+        "Lottery winner shares secret algorithm to win every time.",
+        "Banks don't want you to know this mortgage loophole.",
+        "Restaurant puts this disgusting ingredient in your burger.",
+        "Airline pilot spots city floating in the clouds.",
+        "History books are wrong: Pyramids built by dinosaurs.",
+        "Archaeologists find modern smartphone in 2000-year-old tomb."
     ]
     
-    # Sample real news texts (simplified for demo)
+    # Expanded Real News Dataset (Factual, neutral tone)
     real_news = [
-        "According to a study published in Nature, researchers have found evidence of climate change effects.",
-        "The Federal Reserve announced a new interest rate policy following economic analysis.",
-        "Scientists at MIT have developed a new material with potential applications in renewable energy.",
-        "A peer-reviewed study shows correlation between exercise and improved mental health outcomes.",
-        "Government officials confirmed the implementation of new environmental regulations next year.",
-        "Research data indicates a significant trend in urban population growth over the past decade.",
-        "The World Health Organization released updated guidelines based on recent medical evidence.",
-        "Economic indicators suggest moderate growth in the manufacturing sector this quarter.",
-        "University researchers published findings in the Journal of Medical Science.",
-        "The Department of Energy announced funding for renewable energy projects."
+        # Science & Tech
+        "NASA's James Webb Telescope captures new image of distant galaxy cluster.",
+        "Study published in Nature indicates rise in global sea levels.",
+        "Apple announces new iPhone with improved battery life and camera system.",
+        "SpaceX successfully launches Starlink satellites into orbit.",
+        "Researchers at MIT develop more efficient solar panel efficiency.",
+        "Electric vehicle sales surpass traditional combustion engines in Norway.",
+        "Microsoft releases security update for Windows 11 operating system.",
+        "Scientists discover new species of deep-sea fish in Pacific Ocean.",
+        "WHO declares end to global health emergency for specific virus.",
+        "Nobel Prize in Physics awarded to trio for quantum mechanics work.",
+        
+        # Health
+        "CDC recommends seasonal flu vaccination for most adults.",
+        "Regular exercise linked to lower risk of cardiovascular disease.",
+        "FDA approves new treatment for early-stage Alzheimer's disease.",
+        "Study finds Mediterranean diet may improve heart health.",
+        "Hospitals report decrease in respiratory infections this season.",
+        "New clinical trial shows promise for malaria vaccine.",
+        "Doctors advise getting 7-9 hours of sleep for optimal health.",
+        "High blood pressure defined as readings consistently above 130/80.",
+        "Vitamin D deficiency common in northern latitudes during winter.",
+        "World Health Organization updates guidelines on sugar intake.",
+        
+        # Politics / World
+        "United Nations General Assembly meets to discuss climate change goals.",
+        "Senate passes infrastructure bill with bipartisan support.",
+        "Economic report shows inflation cooling in the last quarter.",
+        "Prime Minister announces new trade agreement with neighboring countries.",
+        "Voters head to polls for local council elections on Tuesday.",
+        "Government releases annual budget report focusing on education.",
+        "Diplomats gather for peace talks in Geneva.",
+        "Unemployment rate falls to lowest level in five years.",
+        "Central Bank raises interest rates by 0.25 percentage points.",
+        "Parliament debates new housing policy legislation.",
+        
+        # General / Business
+        "Stock market closes higher following positive earnings reports.",
+        "Major retailer announces plans to open 50 new stores.",
+        "Airline announces new direct routes to international destinations.",
+        "Local library expands digital lending catalog for residents.",
+        "City council approves funding for new public park.",
+        "Automaker recalls vehicles due to potential airbag issue.",
+        "Weather forecast predicts heavy rain for the weekend.",
+        "Museum opens new exhibition featuring ancient artifacts.",
+        "University announces scholarship program for engineering students.",
+        "Construction begins on new downtown transit center."
     ]
     
     # Combine data

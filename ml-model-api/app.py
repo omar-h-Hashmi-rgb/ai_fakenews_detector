@@ -17,6 +17,10 @@ import pickle
 import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 import warnings
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Suppress warnings
 warnings.filterwarnings('ignore')
@@ -36,6 +40,19 @@ CORS(app)
 model = None
 vectorizer = None
 model_loaded = False
+# Initialize Gemini Client
+try:
+    gemini_api_key = os.getenv('GEMINI_API_KEY')
+    logger.info(f"🔑 Gemini API Key found: {'Yes' if gemini_api_key else 'No'}")
+    
+    if gemini_api_key:
+        import google.generativeai as genai
+        genai.configure(api_key=gemini_api_key)
+        logger.info("✅ Gemini Client initialized")
+    else:
+        logger.warning("⚠️ GEMINI_API_KEY not found in environment variables")
+except Exception as e:
+    logger.error(f"❌ Failed to initialize Gemini client: {e}")
 
 def load_model():
     """Load the fake news detection model"""
@@ -64,8 +81,11 @@ def create_mock_model():
     
     def mock_predict(text):
         # Simple heuristic: articles with certain keywords are more likely to be fake
-        fake_indicators = ['shocking', 'unbelievable', 'secret', 'they dont want you to know', 
-                          'doctors hate', 'one weird trick', 'breaking', 'urgent']
+        fake_indicators = [
+            'shocking', 'unbelievable', 'secret', 'they dont want you to know', 
+            'doctors hate', 'one weird trick', 'breaking', 'urgent',
+            'miracle', 'cure', 'conspiracy', 'chip', '5g'
+        ]
         
         text_lower = text.lower()
         fake_score = 0
@@ -84,8 +104,91 @@ def create_mock_model():
     
     return mock_predict
 
+def predict_with_gemini(text):
+    """Use Google Gemini for prediction"""
+    if not os.getenv('GEMINI_API_KEY'):
+        logger.error("Gemini API key not configured")
+        return None
+    
+    try:
+        import google.generativeai as genai
+        
+        # Get the model
+        model_name = os.getenv('GEMINI_MODEL', 'gemini-1.5-flash')
+        model = genai.GenerativeModel(model_name)
+        
+        logger.info(f"Attempting prediction with model: {model_name}")
+        
+        prompt = f"""
+        You are an expert Fake News Detector. Your job is to analyze news articles and determine their credibility.
+        
+        Analyze the provided text and classify it as 'real' or 'fake'.
+        
+        GUIDELINES:
+        - REAL: Credible reporting, factual tone, standard journalistic style (including sports, finance, entertainment), specific details, neutral language.
+        - FAKE: Conspiracy theories, highly emotional/manipulative language, obvious fabrication, lack of logic/evidence, satirical/parody content (e.g., The Onion).
+        
+        CRITICAL EDGE CASES:
+        1. SATIRE: Articles from sources like 'The Onion' or 'Babylon Bee' should be classified as 'FAKE' (as they are not factual), but ensure the confidence reflects it is satire.
+        2. CLICKBAIT: Articles with sensational headlines but FACTUAL bodies should be classified as 'REAL'. Do not punish a real story just for a catchy title.
+        3. OPINION/EDITORIAL: Legitimate opinion pieces from reputable sources should be classified as 'REAL', even if biased.
+        
+        IMPORTANT: 
+        - If the text is from a reputable source (like BBC, CNN, Reuters, AP) or written in a standard news style, classify it as 'real'.
+        - Only flag as 'fake' if there are clear signs of misinformation, fabrication, or satire.
+        
+        Return ONLY a JSON object with two keys: 
+        1. 'prediction' (string: 'real' or 'fake') 
+        2. 'confidence' (float: 0.0 to 1.0)
+        
+        Do not include any markdown formatting, backticks, or other text. Just the raw JSON string.
+        
+        Analyze this news text:
+        
+        {text[:4000]}
+        """
+        
+        # Generate content
+        response = model.generate_content(prompt)
+        content = response.text.strip()
+        
+        # Clean up potential markdown formatting if Gemini adds it
+        if content.startswith('```json'):
+            content = content[7:]
+        if content.startswith('```'):
+            content = content[3:] 
+        if content.endswith('```'):
+            content = content[:-3]
+        
+        content = content.strip()
+            
+        import json
+        result = json.loads(content)
+        
+        logger.info(f"✅ Success with Gemini")
+        return result['prediction'].lower(), float(result['confidence'])
+            
+    except Exception as e:
+        logger.error(f"Failed with Gemini: {e}")
+        return None
+
 # Load model on startup
 load_model()
+
+@app.route('/', methods=['GET'])
+def index():
+    """Welcome endpoint"""
+    return jsonify({
+        'message': 'Welcome to the AI Fake News Detection API!',
+        'service_status': 'running',
+        'health_check': '/health',
+        'endpoints': {
+            '/predict': 'POST - Predict if news is fake or real',
+            '/sentiment': 'POST - Analyze text sentiment',
+            '/explain': 'POST - Explain a prediction',
+            '/extract-article': 'POST - Extract article text from a URL'
+        }
+    })
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -111,33 +214,52 @@ def predict_fake_news():
         if len(text) < 10:
             return jsonify({'error': 'Text too short for analysis'}), 400
         
-        if model_loaded and model is not None and vectorizer is not None:
-            # Use real model
-            try:
-                # Vectorize the text
-                text_vector = vectorizer.transform([text])
+        use_advanced = data.get('use_advanced', False)
+        
+        label = 'unknown'
+        confidence = 0.5
+        
+        if use_advanced:
+            # STRICTLY ADVANCED MODE (Gemini Only)
+            logger.info("🚀 Advanced Mode: Using Google Gemini")
+            gemini_result = predict_with_gemini(text)
+            
+            if gemini_result:
+                label, confidence = gemini_result
+                logger.info(f"✅ Gemini Prediction: {label} ({confidence})")
+            else:
+                return jsonify({'error': 'Advanced AI service unavailable. Please check API key.'}), 503
+        
+        else:
+            # STRICTLY STANDARD MODE (Local Only)
+            logger.info("🤖 Standard Mode: Using Local Model")
+            if model_loaded and model is not None and vectorizer is not None:
+                try:
+                    # Vectorize the text
+                    text_vector = vectorizer.transform([text])
+                    
+                    # Get prediction and probabilities
+                    prediction = model.predict(text_vector)[0]
+                    probabilities = model.predict_proba(text_vector)[0]
+                    
+                    # Determine confidence based on prediction
+                    if prediction == 1:  # Fake
+                        confidence = probabilities[1]
+                        label = 'fake'
+                    else:  # Real
+                        confidence = probabilities[0]
+                        label = 'real'
+                    logger.info(f"✅ Local Model Prediction: {label} ({confidence})")
                 
-                # Get prediction and probabilities
-                prediction = model.predict(text_vector)[0]
-                probabilities = model.predict_proba(text_vector)[0]
-                
-                # Determine confidence based on prediction
-                if prediction == 1:  # Fake
-                    confidence = probabilities[1]
-                    label = 'fake'
-                else:  # Real
-                    confidence = probabilities[0]
-                    label = 'real'
-                
-            except Exception as e:
-                logger.error(f"Model prediction error: {e}")
-                # Fall back to mock model
+                except Exception as e:
+                    logger.error(f"Model prediction error: {e}")
+                    # Fall back to mock model
+                    mock_predict = create_mock_model()
+                    label, confidence = mock_predict(text)
+            else:
+                # Use mock model if local failed to load
                 mock_predict = create_mock_model()
                 label, confidence = mock_predict(text)
-        else:
-            # Use mock model
-            mock_predict = create_mock_model()
-            label, confidence = mock_predict(text)
         
         # Get sentiment for additional context
         try:
@@ -317,7 +439,11 @@ def extract_article():
             return jsonify({'error': 'Invalid URL format'}), 400
         
         # Use newspaper3k to extract article
-        article = Article(url)
+        config = newspaper.Config()
+        config.browser_user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        config.request_timeout = 10
+        
+        article = Article(url, config=config)
         article.download()
         article.parse()
         
