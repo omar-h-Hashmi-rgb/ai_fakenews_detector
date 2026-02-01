@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, Calendar, ExternalLink, AlertCircle, RefreshCw } from 'lucide-react';
+import { TrendingUp, ExternalLink, AlertCircle, RefreshCw } from 'lucide-react';
 import { getApiUrl } from '../config';
 
 interface NewsArticle {

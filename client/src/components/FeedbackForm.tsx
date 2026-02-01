@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { MessageSquare, Send, AlertCircle, CheckCircle } from 'lucide-react';
+import { Send, AlertCircle, CheckCircle } from 'lucide-react';
 import { getApiUrl } from '../config';
 import { PredictionData } from '../pages/HomePage';
 
