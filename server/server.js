@@ -18,7 +18,9 @@ const PORT = process.env.PORT || 8000;
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? false : ['http://localhost:3000'],
+  origin: process.env.NODE_ENV === 'production'
+    ? [process.env.FRONTEND_URL, 'https://ai-fake-news-detector.vercel.app']
+    : ['http://localhost:3000'],
   credentials: true
 }));
 
@@ -47,11 +49,11 @@ const connectDB = async () => {
     await client.connect();
     db = client.db();
     console.log('✅ Connected to MongoDB');
-    
+
     // Create indexes
     await db.collection('predictions').createIndex({ timestamp: -1 });
     await db.collection('feedback').createIndex({ timestamp: -1 });
-    
+
   } catch (error) {
     console.error('❌ MongoDB connection error:', error);
     console.log('⚠️  Running without database - some features may not work');
@@ -66,8 +68,8 @@ app.use((req, res, next) => {
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     timestamp: new Date().toISOString(),
     database: db ? 'connected' : 'disconnected'
   });
@@ -82,7 +84,7 @@ app.use('/api/trending', trendingRouter);
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Server error:', err);
-  res.status(500).json({ 
+  res.status(500).json({
     error: 'Internal server error',
     message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
   });
@@ -96,7 +98,7 @@ app.use('*', (req, res) => {
 // Start server
 const startServer = async () => {
   await connectDB();
-  
+
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📍 Health check: http://localhost:${PORT}/health`);

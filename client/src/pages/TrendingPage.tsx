@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, ExternalLink, AlertCircle, RefreshCw } from 'lucide-react';
+import { TrendingUp, Calendar, ExternalLink, AlertCircle, RefreshCw } from 'lucide-react';
+import { getApiUrl } from '../config';
 
 interface NewsArticle {
   title: string;
@@ -26,16 +28,16 @@ const TrendingPage: React.FC = () => {
   const fetchTrendingNews = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      const response = await fetch('/api/trending');
+      const response = await fetch(getApiUrl('/api/trending'));
       if (!response.ok) {
         if (response.status === 429) {
           throw new Error('Rate limit exceeded. Please try again later.');
         }
         throw new Error('Failed to fetch trending news');
       }
-      
+
       const data = await response.json();
       setArticles(data.articles || []);
       setLastUpdated(new Date());
@@ -48,7 +50,7 @@ const TrendingPage: React.FC = () => {
 
   const analyzeArticle = (url: string) => {
     // Navigate to home page with URL pre-filled
-    window.location.href = `/?url=${encodeURIComponent(url)}`;
+    window.location.href = `/? url = ${encodeURIComponent(url)} `;
   };
 
   if (isLoading && articles.length === 0) {
@@ -86,13 +88,13 @@ const TrendingPage: React.FC = () => {
             )}
           </div>
         </div>
-        
+
         <button
           onClick={fetchTrendingNews}
           disabled={isLoading}
           className="flex items-center space-x-2 btn-secondary"
         >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`h - 4 w - 4 ${isLoading ? 'animate-spin' : ''} `} />
           <span>Refresh</span>
         </button>
       </div>
@@ -137,7 +139,7 @@ const TrendingPage: React.FC = () => {
                   />
                 </div>
               )}
-              
+
               <div className="p-6">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2 py-1 rounded-full">
@@ -147,15 +149,15 @@ const TrendingPage: React.FC = () => {
                     {new Date(article.publishedAt).toLocaleDateString()}
                   </span>
                 </div>
-                
+
                 <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2 line-clamp-2">
                   {article.title}
                 </h3>
-                
+
                 <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">
                   {article.description}
                 </p>
-                
+
                 <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                   <button
                     onClick={() => analyzeArticle(article.url)}
@@ -163,7 +165,7 @@ const TrendingPage: React.FC = () => {
                   >
                     Analyze for Fake News
                   </button>
-                  
+
                   <a
                     href={article.url}
                     target="_blank"

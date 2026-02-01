@@ -1,5 +1,7 @@
+
 import React, { useState } from 'react';
-import { Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { MessageSquare, Send, AlertCircle, CheckCircle } from 'lucide-react';
+import { getApiUrl } from '../config';
 import { PredictionData } from '../pages/HomePage';
 
 interface FeedbackFormProps {
@@ -22,7 +24,7 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ predictionData, onSubmitted
     setError(null);
 
     try {
-      const response = await fetch('/api/feedback', {
+      const response = await fetch(getApiUrl('/api/feedback'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,22 +77,20 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ predictionData, onSubmitted
           <button
             type="button"
             onClick={() => setRating('positive')}
-            className={`flex-1 py-2 px-4 rounded-lg border transition-all duration-200 ${
-              rating === 'positive'
-                ? 'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
-                : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-green-400 hover:text-green-600 dark:hover:text-green-400'
-            }`}
+            className={`flex - 1 py - 2 px - 4 rounded - lg border transition - all duration - 200 ${rating === 'positive'
+              ? 'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+              : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-green-400 hover:text-green-600 dark:hover:text-green-400'
+              } `}
           >
             👍 Yes, accurate
           </button>
           <button
             type="button"
             onClick={() => setRating('negative')}
-            className={`flex-1 py-2 px-4 rounded-lg border transition-all duration-200 ${
-              rating === 'negative'
-                ? 'border-red-500 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
-                : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-red-400 hover:text-red-600 dark:hover:text-red-400'
-            }`}
+            className={`flex - 1 py - 2 px - 4 rounded - lg border transition - all duration - 200 ${rating === 'negative'
+              ? 'border-red-500 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+              : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-red-400 hover:text-red-600 dark:hover:text-red-400'
+              } `}
           >
             👎 No, inaccurate
           </button>
@@ -123,11 +123,10 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ predictionData, onSubmitted
       <button
         type="submit"
         disabled={!rating || isSubmitting}
-        className={`w-full flex items-center justify-center space-x-2 py-2 px-4 rounded-lg font-medium transition-all duration-200 ${
-          rating && !isSubmitting
-            ? 'bg-primary-600 hover:bg-primary-700 text-white'
-            : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-        }`}
+        className={`w - full flex items - center justify - center space - x - 2 py - 2 px - 4 rounded - lg font - medium transition - all duration - 200 ${rating && !isSubmitting
+          ? 'bg-primary-600 hover:bg-primary-700 text-white'
+          : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+          } `}
       >
         <Send className="h-4 w-4" />
         <span>{isSubmitting ? 'Submitting...' : 'Submit Feedback'}</span>

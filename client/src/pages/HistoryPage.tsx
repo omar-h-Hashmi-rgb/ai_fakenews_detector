@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { History, Download, Trash2, AlertCircle } from 'lucide-react';
 import { PredictionData } from './HomePage';
 import Modal from '../components/Modal';
+import { getApiUrl } from '../config';
 import jsPDF from 'jspdf';
 
 const HistoryPage: React.FC = () => {
@@ -16,7 +17,7 @@ const HistoryPage: React.FC = () => {
 
   const fetchHistory = async () => {
     try {
-      const response = await fetch('/api/history');
+      const response = await fetch(getApiUrl('/api/history'));
       if (!response.ok) throw new Error('Failed to fetch history');
       const data = await response.json();
       setHistory(data);
@@ -51,7 +52,7 @@ const HistoryPage: React.FC = () => {
 
   const confirmClearHistory = async () => {
     try {
-      const response = await fetch('/api/history', { method: 'DELETE' });
+      const response = await fetch(getApiUrl('/api/history'), { method: 'DELETE' });
       if (!response.ok) throw new Error('Failed to clear history');
       setHistory([]);
     } catch (err) {

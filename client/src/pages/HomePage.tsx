@@ -3,6 +3,7 @@ import ArticleInput from '../components/ArticleInput';
 import PredictionResult from '../components/PredictionResult';
 import VoiceInput from '../components/VoiceInput';
 import { AlertCircle } from 'lucide-react';
+import { getApiUrl } from '../config';
 
 export interface PredictionData {
   prediction: 'real' | 'fake';
@@ -30,7 +31,7 @@ const HomePage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch('/api/analyze', {
+      const response = await fetch(getApiUrl('/api/analyze'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
